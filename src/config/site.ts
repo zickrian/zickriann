@@ -40,6 +40,9 @@ export const MAIN_NAV: NavItem[] = [
 
 export const X_HANDLE = "@zickrian"
 export const GITHUB_USERNAME = "zickrian"
+export const GITHUB_REPO = "zickrian/zickriann"
+export const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
 export const UTM_PARAMS = {
   utm_source: "zickrian",
 }
+

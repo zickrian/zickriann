@@ -2,22 +2,22 @@
 
 import { useSyncExternalStore } from "react"
 
-const SERVER_GREETING = "Good morning"
-
-function getGreeting() {
-  const hour = new Date().getHours()
-
-  if (hour < 12) return "Good morning"
-  if (hour < 17) return "Good afternoon"
-  return "Good evening"
-}
+const subscribe = () => () => {}
 
 export function DynamicGreeting() {
-  const greeting = useSyncExternalStore(
-    () => () => {},
-    getGreeting,
-    () => SERVER_GREETING
+  const isMounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
   )
 
-  return <>{greeting}</>
+  if (!isMounted) {
+    return <span suppressHydrationWarning>Good morning</span>
+  }
+
+  const hour = new Date().getHours()
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+
+  return <span suppressHydrationWarning>{greeting}</span>
 }

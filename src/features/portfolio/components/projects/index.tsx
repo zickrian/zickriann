@@ -5,6 +5,7 @@ import Link from "next/link"
 
 import { CollapsibleList } from "@/components/collapsible-list"
 import { SectionCallout } from "@/components/section-callout"
+import { useIntentPrefetch } from "@/hooks/use-intent-prefetch"
 import { useTranslation } from "@/lib/i18n/use-translation"
 
 import { PROJECTS } from "../../data/projects"
@@ -13,6 +14,7 @@ import { ProjectItem } from "./project-item"
 
 export function Projects() {
   const { t } = useTranslation()
+  const intentPrefetch = useIntentPrefetch("/projects")
 
   return (
     <Panel id="projects">
@@ -30,6 +32,7 @@ export function Projects() {
           <Link
             href="/projects"
             prefetch={false}
+            {...intentPrefetch}
             className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             {t.projects.viewAll}

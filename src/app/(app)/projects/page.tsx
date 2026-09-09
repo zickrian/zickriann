@@ -1,3 +1,5 @@
+import Script from "next/script"
+
 import { SectionSeparator } from "@/components/section-separator"
 import { SITE_INFO } from "@/config/site"
 import { PROJECTS } from "@/features/portfolio/data/projects"
@@ -54,14 +56,16 @@ export const metadata = createPageMetadata({
 export default function ProjectsPage() {
   return (
     <>
-      <script
+      <Script
+        id="projects-jsonld"
         type="application/ld+json"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(getProjectsJsonLd()).replace(/</g, "\\u003c"),
         }}
       />
       <SectionSeparator />
-      <div className="relative z-1 -mt-px border-x border-t border-line bg-background max-md:border-x-0">
+      <div className="relative z-1 -mt-px border-x border-t border-line bg-card max-md:border-x-0">
         <ProjectsPageContent projects={PROJECTS} />
 
         {/* Butts straight against the last row's rule, with no gap - that rule

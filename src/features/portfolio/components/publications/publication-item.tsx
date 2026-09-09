@@ -57,7 +57,10 @@ export function PublicationItem({
           <dl>
             <dt className="sr-only">{t.publications.published}</dt>
             <dd>
-              <time dateTime={new Date(publication.date).toISOString()}>
+              <time
+                suppressHydrationWarning
+                dateTime={new Date(publication.date).toISOString()}
+              >
                 {format(new Date(publication.date), "MM.yyyy")}
               </time>
             </dd>

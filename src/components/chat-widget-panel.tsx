@@ -225,6 +225,8 @@ function EmailConfirmCard({
           </span>
           {isEditing ? (
             <input
+              name="subject"
+              toolparamdescription="Subject line of the email inquiry"
               className="flex-1 border-none bg-transparent text-[16px] font-medium text-foreground focus:outline-none sm:text-[13px]"
               value={editedSubject}
               onChange={(e) => setEditedSubject(e.target.value)}
@@ -239,6 +241,8 @@ function EmailConfirmCard({
         <div className="flex flex-col px-1.5 py-3">
           {isEditing ? (
             <textarea
+              name="message"
+              toolparamdescription="Body content of the email inquiry"
               rows={Math.max(3, editedMessage.split("\n").length)}
               className="w-full resize-y overflow-y-auto bg-transparent text-[16px] leading-relaxed text-foreground/80 focus:outline-none sm:text-[14px]"
               value={editedMessage}
@@ -1063,6 +1067,16 @@ export function ChatWidgetPanel() {
   // ── Form element ─────────────────────────────────────────────────────────────
   const FormElement = (
     <form
+      toolname={
+        emailFlow.step === "filling_form"
+          ? "send_contact_email"
+          : "ask_portfolio_assistant"
+      }
+      tooldescription={
+        emailFlow.step === "filling_form"
+          ? "Send a direct contact email inquiry to Firdaus Khotibul Zickrian"
+          : "Ask questions about Firdaus Khotibul Zickrian's skills, projects, experience, or background"
+      }
       onSubmit={(e) => {
         e.preventDefault()
         if (emailFlow.step === "filling_form") {
@@ -1104,6 +1118,8 @@ export function ChatWidgetPanel() {
 
               <div className="mb-2 flex flex-col border-b border-border/60 pb-1 dark:border-white/8">
                 <input
+                  name="senderName"
+                  toolparamdescription="Sender's full name"
                   placeholder={t.chat.yourName}
                   value={emailFlow.name}
                   onChange={(e) => {
@@ -1114,6 +1130,8 @@ export function ChatWidgetPanel() {
                 />
 
                 <input
+                  name="senderEmail"
+                  toolparamdescription="Sender's email address"
                   placeholder={t.chat.yourEmail}
                   value={emailFlow.email}
                   type="email"
@@ -1135,6 +1153,12 @@ export function ChatWidgetPanel() {
 
           <textarea
             ref={textareaRef}
+            name={emailFlow.step === "filling_form" ? "message" : "query"}
+            toolparamdescription={
+              emailFlow.step === "filling_form"
+                ? "Message body or inquiry to send to Firdaus"
+                : "Natural language question about Firdaus Khotibul Zickrian's portfolio or background"
+            }
             value={
               emailFlow.step === "filling_form" ? emailFlow.rawMessage : input
             }

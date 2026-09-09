@@ -47,7 +47,7 @@ export function ExperiencePositionItem({
       disabled={!position.description}
     >
       <div
-        className="pointer-events-none absolute bottom-0 left-3 hidden size-4 bg-background group-last/experience-position:flex"
+        className="pointer-events-none absolute bottom-0 left-3 hidden size-4 bg-card group-last/experience-position:flex"
         aria-hidden
       >
         <span className="size-full -translate-y-2.25 rounded-bl-sm border-b border-l" />
@@ -112,7 +112,12 @@ export function ExperiencePositionItem({
               />
               <dl>
                 <dt className="sr-only">{t.experiences.duration}</dt>
-                <dd className="font-mono text-xs tabular-nums">{duration}</dd>
+                <dd
+                  suppressHydrationWarning
+                  className="font-mono text-xs tabular-nums"
+                >
+                  {duration}
+                </dd>
               </dl>
             </>
           )}

@@ -112,9 +112,10 @@ const dictionary = {
       home: "Home",
     },
     notFound: {
-      message: "This page doesn't exist, or it moved somewhere else.",
-      goHome: "Go to Home",
-      browseProjects: "Browse projects",
+      message:
+        "Looks like this page doesn’t exist (yet). Just like a blank space in a conversation, there’s nothing to respond to. Go back to",
+      home: "home",
+      suffix: "and rejoin the conversation.",
     },
     blog: {
       loadErrorTitle: "Couldn't load posts right now",
@@ -279,9 +280,10 @@ const dictionary = {
       home: "Beranda",
     },
     notFound: {
-      message: "Halaman ini tidak ada, atau sudah dipindahkan.",
-      goHome: "Ke Beranda",
-      browseProjects: "Lihat proyek",
+      message:
+        "Sepertinya halaman ini belum ada (belum dibuat). Layaknya jeda hening dalam percakapan, tidak ada yang dapat direspons. Kembali ke",
+      home: "beranda",
+      suffix: "dan bergabung kembali ke percakapan.",
     },
     blog: {
       loadErrorTitle: "Gagal memuat tulisan saat ini",

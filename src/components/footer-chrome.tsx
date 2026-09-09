@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 
+import { useIntentPrefetch } from "@/hooks/use-intent-prefetch"
 import { useTranslation } from "@/lib/i18n/use-translation"
 
 const INDEX_LABEL_KEYS: Record<string, "home" | "projects" | "blog" | "gallery"> = {
@@ -25,20 +26,34 @@ export function FooterIndexList({
 
   return (
     <ul>
-      {links.map(({ title, href }) => {
-        const key = INDEX_LABEL_KEYS[href]
-        return (
-          <li key={href}>
-            <Link
-              href={href}
-              prefetch={false}
-              className="inline-flex w-fit transition-[color] hover:text-foreground"
-            >
-              {key ? t.nav[key] : title}
-            </Link>
-          </li>
-        )
-      })}
+      {links.map(({ title, href }) => (
+        <li key={href}>
+          <FooterIndexLink href={href}>
+            {INDEX_LABEL_KEYS[href] ? t.nav[INDEX_LABEL_KEYS[href]] : title}
+          </FooterIndexLink>
+        </li>
+      ))}
     </ul>
+  )
+}
+
+function FooterIndexLink({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) {
+  const intentPrefetch = useIntentPrefetch(href)
+
+  return (
+    <Link
+      href={href}
+      prefetch={false}
+      {...intentPrefetch}
+      className="inline-flex w-fit transition-[color] hover:text-foreground"
+    >
+      {children}
+    </Link>
   )
 }

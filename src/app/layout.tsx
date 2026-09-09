@@ -2,6 +2,7 @@ import "@/styles/globals.css"
 
 import type { Metadata, Viewport } from "next"
 import dynamic from "next/dynamic"
+import Script from "next/script"
 import type { Person, ProfilePage, WebSite, WithContext } from "schema-dts"
 
 import { Providers } from "@/components/providers"
@@ -59,6 +60,13 @@ function getProfilePageJsonLd(): WithContext<ProfilePage> {
     description: profileDescription,
     knowsAbout: USER.keywords,
     sameAs: USER.sameAs,
+    alumniOf: [
+      {
+        "@type": "CollegeOrUniversity",
+        name: "Universitas Dian Nuswantoro",
+        url: "https://dinus.ac.id",
+      },
+    ],
     worksFor: USER.jobs.map((job) => ({
       "@type": "Organization",
       name: job.company,
@@ -101,16 +109,16 @@ const themeColorBootstrap = String.raw`
   try {
     var isDark = localStorage.theme === 'dark' || (!('theme' in localStorage)) || (localStorage.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (isDark) {
-      var meta = document.querySelector('meta[name="theme-color"]');
+      var meta = document.querySelector('meta[name=\"theme-color\"]');
       if (meta) meta.setAttribute('content', '${META_THEME_COLORS.dark}');
     }
-  } catch (_) {}
+  } catch (_) {}\
 
   try {
     if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
       document.documentElement.classList.add('os-macos');
     }
-  } catch (_) {}
+  } catch (_) {}\
 `
 
 export const metadata: Metadata = {
@@ -137,6 +145,7 @@ export const metadata: Metadata = {
     url: "/",
     type: "website",
     locale: "en_US",
+    alternateLocale: ["id_ID"],
     title: profileTitle,
     description: profileDescription,
     images: [{ ...SITE_OG_IMAGE, url: absoluteUrl(SITE_OG_IMAGE.url) }],
@@ -200,7 +209,17 @@ export default function RootLayout({
             browser never opens a connection to either, so hinting them just
             wasted a connection slot and tripped Lighthouse's unused-preconnect
             audit. */}
-        <script dangerouslySetInnerHTML={{ __html: themeColorBootstrap }} />
+        <Script
+          id="theme-color-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeColorBootstrap }}
+        />
+        <link
+          rel="alternate"
+          type="text/markdown"
+          href="/llms.txt"
+          title="LLMs.txt"
+        />
         <link
           rel="preload"
           href="/fonts/geist-sans-latin.woff2"
@@ -208,7 +227,28 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        <script
+        {/* Decorative display face, used only by panel titles and the footer
+            colophon - all below the fold. Preloaded so it never swaps in late,
+            but at low priority so its 73 KB never competes with the LCP
+            banner on a mobile connection. */}
+        <link
+          rel="preload"
+          href="/fonts/caveat-latin.woff2"
+          as="font"
+          type="font/woff2"
+          fetchPriority="low"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/geist-mono-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <Script
+          id="root-jsonld"
+          strategy="beforeInteractive"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(getRootJsonLd()).replace(/</g, "\\u003c"),

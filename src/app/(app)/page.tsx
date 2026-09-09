@@ -1,14 +1,43 @@
 import type { Metadata } from "next"
+import dynamic from "next/dynamic"
 
 import { SectionSeparator } from "@/components/section-separator"
-import { Awards } from "@/features/portfolio/components/awards"
-import { Certifications } from "@/features/portfolio/components/certifications"
 import { Experiences } from "@/features/portfolio/components/experiences"
-import { GitHubContributions } from "@/features/portfolio/components/github-contributions"
 import { Projects } from "@/features/portfolio/components/projects"
-import { Publications } from "@/features/portfolio/components/publications"
 import { TechStack } from "@/features/portfolio/components/tech-stack"
 import { USER } from "@/features/portfolio/data/user"
+
+// Below-fold components dynamically imported with SSR enabled
+// to keep full SEO while code-splitting the initial JS payload
+const GitHubContributions = dynamic(
+  () =>
+    import("@/features/portfolio/components/github-contributions").then(
+      (m) => m.GitHubContributions
+    ),
+  { ssr: true }
+)
+
+const Awards = dynamic(
+  () =>
+    import("@/features/portfolio/components/awards").then((m) => m.Awards),
+  { ssr: true }
+)
+
+const Publications = dynamic(
+  () =>
+    import("@/features/portfolio/components/publications").then(
+      (m) => m.Publications
+    ),
+  { ssr: true }
+)
+
+const Certifications = dynamic(
+  () =>
+    import("@/features/portfolio/components/certifications").then(
+      (m) => m.Certifications
+    ),
+  { ssr: true }
+)
 
 export const metadata: Metadata = {
   title: {

@@ -60,3 +60,4 @@ pnpm test         # Unit tests (Vitest)
 ## License
 
 [MIT](./LICENSE) © Firdaus Khotibul Zickrian
+

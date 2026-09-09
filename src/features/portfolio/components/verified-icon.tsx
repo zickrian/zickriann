@@ -1,10 +1,69 @@
-export function VerifiedIcon(props: React.ComponentProps<"svg">) {
+export function VerifiedIcon({
+  className = "",
+  ...props
+}: React.ComponentProps<"svg">) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
-      <path
-        fill="currentColor"
-        d="M24 12a4.454 4.454 0 0 0-2.564-3.91 4.437 4.437 0 0 0-.948-4.578 4.436 4.436 0 0 0-4.577-.948A4.44 4.44 0 0 0 12 0a4.423 4.423 0 0 0-3.9 2.564 4.434 4.434 0 0 0-2.43-.178 4.425 4.425 0 0 0-2.158 1.126 4.42 4.42 0 0 0-1.12 2.156 4.42 4.42 0 0 0 .183 2.421A4.456 4.456 0 0 0 0 12a4.465 4.465 0 0 0 2.576 3.91 4.433 4.433 0 0 0 .936 4.577 4.459 4.459 0 0 0 4.577.95A4.454 4.454 0 0 0 12 24a4.439 4.439 0 0 0 3.91-2.563 4.26 4.26 0 0 0 5.526-5.526A4.453 4.453 0 0 0 24 12Zm-13.709 4.917-4.38-4.378 1.652-1.663 2.646 2.646L15.83 7.4l1.72 1.591-7.258 7.926Z"
-      />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 22 22"
+      className={className}
+      aria-label="Verified account"
+      role="img"
+      {...props}
+    >
+      <defs>
+        <linearGradient
+          id="x_gold_paint0"
+          x1="4"
+          y1="1.5"
+          x2="19.5"
+          y2="22"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#F4E72A" />
+          <stop offset="0.539" stopColor="#CD8105" />
+          <stop offset="0.68" stopColor="#CB7B00" />
+          <stop offset="1" stopColor="#F4EC26" />
+        </linearGradient>
+        <linearGradient
+          id="x_gold_paint1"
+          x1="5"
+          y1="2.5"
+          x2="17.5"
+          y2="19.5"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#F9E87F" />
+          <stop offset="0.406" stopColor="#E2B719" />
+          <stop offset="0.989" stopColor="#E2B719" />
+        </linearGradient>
+      </defs>
+      <g>
+        {/* Layer 1: Bevel Gold Outer Base */}
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M13.596 3.011L11 .5 8.404 3.011l-3.576-.506-.624 3.558-3.19 1.692L2.6 11l-1.586 3.245 3.19 1.692.624 3.558 3.576-.506L11 21.5l2.596-2.511 3.576.506.624-3.558 3.19-1.692L19.4 11l1.586-3.245-3.19-1.692-.624-3.558-3.576.506z"
+          fill="url(#x_gold_paint0)"
+        />
+        {/* Layer 2: Main Rich Gold Gradient Body */}
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M13.348 3.772L11 1.5 8.651 3.772l-3.235-.458-.565 3.219-2.886 1.531L3.4 11l-1.435 2.936 2.886 1.531.565 3.219 3.235-.458L11 20.5l2.348-2.272 3.236.458.564-3.219 2.887-1.531L18.6 11l1.435-2.936-2.887-1.531-.564-3.219-3.236.458z"
+          fill="url(#x_gold_paint1)"
+        />
+        {/* Layer 3: Drop Shadow on Checkmark Edge */}
+        <path
+          d="M9.662 15.65 6.233 12.22l1.414-1.414 2.015 2.015 4.336-4.73 1.47 1.348-5.806 6.21z"
+          fill="#D18800"
+        />
+        {/* Layer 4: Bold Black Checkmark */}
+        <path
+          d="M9.662 14.85 6.233 11.42l1.414-1.414 2.015 2.015 4.336-4.73 1.47 1.348-5.806 6.21z"
+          fill="#000000"
+        />
+      </g>
     </svg>
   )
 }

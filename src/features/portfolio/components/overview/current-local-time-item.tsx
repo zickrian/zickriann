@@ -35,8 +35,11 @@ export function CurrentLocalTimeItem({ timeZone }: CurrentLocalTimeItemProps) {
         <Clock12Icon />
       </IntroItemIcon>
 
-      <IntroItemContent aria-label={`Local time: ${timeString || "00:00"}`}>
-        {timeString || "00:00"}
+      <IntroItemContent
+        suppressHydrationWarning
+        aria-label={`Local time: ${timeString || "00:00"}`}
+      >
+        <span suppressHydrationWarning>{timeString || "00:00"}</span>
       </IntroItemContent>
     </IntroItem>
   )

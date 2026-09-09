@@ -21,10 +21,10 @@
     "test": "vitest run"
   },
   "browserslist": [
-    "Chrome >= 97",
-    "Firefox >= 104",
-    "Safari >= 15.4",
-    "Edge >= 97"
+    "Chrome >= 110",
+    "Firefox >= 110",
+    "Safari >= 16.4",
+    "Edge >= 110"
   ],
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

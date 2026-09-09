@@ -55,7 +55,7 @@ export function SocialLinkItem({
   return (
     <a
       className={cn(
-        "flex cursor-pointer items-center gap-3 bg-background px-4 py-3 transition-[background-color] ease-out hover:bg-accent-muted",
+        "flex cursor-pointer items-center gap-3 bg-card px-4 py-3 transition-[background-color] ease-out hover:bg-accent-muted",
         // Desktop horizontal dividers (2 horizontal lines)
         isDesktopRow1 && "md:border-b md:border-line",
         isDesktopRow2 && "md:border-t md:border-line",

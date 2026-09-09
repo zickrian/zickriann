@@ -27,7 +27,7 @@ export function ProjectGallery({
 
   return (
     <div className="relative">
-      <div className="relative aspect-1200/630 overflow-hidden rounded-lg border border-line bg-background shadow-sm">
+      <div className="relative aspect-1200/630 overflow-hidden rounded-lg border border-line bg-card shadow-sm">
         <Image
           src={images[current]}
           alt={`${title} - ${current + 1}`}
@@ -43,14 +43,14 @@ export function ProjectGallery({
       {/* Navigation arrows */}
       <button
         onClick={prev}
-        className="absolute top-1/2 left-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-background"
+        className="absolute top-1/2 left-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-card"
         aria-label="Previous image"
       >
         <ChevronLeftIcon className="size-4" />
       </button>
       <button
         onClick={next}
-        className="absolute top-1/2 right-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-background"
+        className="absolute top-1/2 right-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-card"
         aria-label="Next image"
       >
         <ChevronRightIcon className="size-4" />

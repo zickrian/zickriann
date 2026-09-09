@@ -3,57 +3,88 @@
 import { BriefcaseBusiness, Globe2, MapPin } from "lucide-react"
 import Image from "next/image"
 
+import { AsciiBanner } from "@/components/ascii-banner"
+import { GitHubStars } from "@/components/github-stars"
 import { VerifiedIcon } from "@/features/portfolio/components/verified-icon"
+import type { GitHubRepoStats } from "@/features/portfolio/data/github-repo"
 import { SOCIAL_LINKS } from "@/features/portfolio/data/social-links"
 import { USER } from "@/features/portfolio/data/user"
 import { useTranslation } from "@/lib/i18n/use-translation"
 
-export function ProfileHeader() {
+export function ProfileHeader({
+  repoStats,
+}: {
+  repoStats?: GitHubRepoStats | null
+}) {
   const { l } = useTranslation()
 
   return (
     <header
       id="about"
-      className="relative z-1 border border-line bg-card max-md:border-x-0"
+      className="relative z-1 border-x border-b border-line bg-card max-md:border-x-0"
     >
-      <div className="relative h-36 overflow-hidden border-b border-line sm:h-44">
-        <Image
-          src="/banner.webp"
-          alt="Profile Banner"
-          fill
-          loading="eager"
-          fetchPriority="high"
-          sizes="(min-width: 768px) 720px, 100vw"
-          className="object-cover object-center"
-        />
+      <div className="relative h-44 overflow-hidden border-b border-line sm:h-56">
+        <AsciiBanner src="/bannerfield.webp" alt="Profile Banner" />
       </div>
 
       <div className="relative px-5 pb-5 sm:px-6 sm:pb-6">
-        <div className="relative -mt-12 size-24 overflow-hidden rounded-full border-4 border-card bg-muted shadow-sm sm:-mt-14 sm:size-28">
-          <Image
-            src={USER.avatar}
-            alt={`Portrait of ${USER.displayName}`}
-            fill
-            sizes="(min-width: 640px) 104px, 88px"
-            className="size-full object-cover object-[center_35%]"
+        <div className="flex items-end justify-between gap-3">
+          <div className="relative -mt-13 size-26 overflow-hidden rounded-[15%] border-4 border-card bg-card sm:-mt-16 sm:size-32 sm:rounded-[16%]">
+            <Image
+              src={USER.avatar}
+              alt={`Portrait of ${USER.displayName}`}
+              fill
+              priority
+              sizes="(min-width: 640px) 128px, 104px"
+              className="size-full object-cover object-[center_28%]"
+            />
+          </div>
+
+          <GitHubStars
+            stargazersCount={repoStats?.stars ?? 0}
+            className="mb-1"
           />
         </div>
 
         <div className="mt-3 min-w-0">
-          <h1 className="flex items-center gap-1.5 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-            <span>{USER.displayName}</span>
-            <VerifiedIcon
-              className="size-[0.9em] shrink-0 text-[#1d9bf0]"
-              aria-label="Verified profile"
-              role="img"
-            />
-          </h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
+            <h1 className="text-[20px] font-bold leading-6 tracking-tight text-foreground sm:text-[22px]">
+              {USER.displayName}
+            </h1>
+            <div className="inline-flex items-center gap-1 sm:gap-1.5">
+              <VerifiedIcon
+                className="size-5 shrink-0 sm:size-[22px]"
+                aria-label="Verified profile"
+                role="img"
+              />
+              <a
+                href="https://www.instagram.com/custompedia/"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="PT Custompedia Creative Group"
+                aria-label="PT Custompedia Creative Group"
+                className="relative inline-flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-[4px] border border-[#cfd9de] bg-white p-[2px] shadow-2xs transition-transform hover:scale-105 dark:border-[#536471] sm:size-[22px] sm:rounded-[4.5px]"
+              >
+                {/* Same quality as the experience list renders it at, so both
+                    resolve to one optimised variant instead of fetching the
+                    identical 32px logo twice per page load. */}
+                <Image
+                  src="/logos/custompedia-logo.webp"
+                  alt="Custompedia"
+                  width={22}
+                  height={22}
+                  quality={85}
+                  className="size-full object-contain"
+                />
+              </a>
+            </div>
+          </div>
+          <p className="mt-0.5 text-[15px] leading-5 text-muted-foreground">
             @{USER.username}
           </p>
         </div>
 
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground sm:text-base">
+        <p className="mt-3.5 max-w-2xl text-[15px] leading-relaxed text-foreground sm:text-base">
           {l(USER.about, USER.aboutId)}
         </p>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import Script from "next/script"
 
 import { SITE_INFO } from "@/config/site"
 import { PROJECTS, PROJECTS_BY_ID } from "@/features/portfolio/data/projects"
@@ -140,8 +141,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <script
+      <Script
+        id={`project-jsonld-${project.id}`}
         type="application/ld+json"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}

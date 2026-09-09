@@ -14,7 +14,7 @@ export const EXPERIENCES: Experience[] = [
   {
     id: "custompedia",
     companyName: "PT Custompedia Creative Group",
-    companyLogo: "/logos/custompedia.webp",
+    companyLogo: "/logos/custompedia-logo.webp",
     companyWebsite: "https://www.instagram.com/custompedia/",
     positions: [
       {
@@ -25,10 +25,16 @@ export const EXPERIENCES: Experience[] = [
         },
         employmentType: "Internship",
         icon: <AstroidIcon />,
-        description:
-          "Currently onboarding and collaborating with the team to develop and integrate AI/ML solutions.",
-        descriptionId:
-          "Saat ini sedang menjalani onboarding dan berkolaborasi dengan tim untuk mengembangkan dan mengintegrasikan solusi AI/ML.",
+        description: `- Developed an internal ERP with AI-powered modules for recruitment, EMS, scheduling, & workflow automation.
+- Translated business requirements into functional specifications, workflows, and test scenarios to support ERP development.
+- Conducted defect analysis and collaborated with developers to troubleshoot issues and ensure successful implementation of ERP functionalities.
+- Reduced production error rates from 88% to 2%, significantly improving system reliability by optimizing asynchronous processing and Cloudflare R2 storage workflows.
+- Coordinated with 20+ stakeholders across teams to integrate AI agents and automation workflows into internal business operations, ensuring successful adoption and implementation.`,
+        descriptionId: `- Mengembangkan ERP internal dengan modul bertenaga AI untuk rekrutmen, EMS, penjadwalan, & otomatisasi alur kerja.
+- Menerjemahkan kebutuhan bisnis menjadi spesifikasi fungsional, alur kerja, dan skenario pengujian untuk mendukung pengembangan ERP.
+- Melakukan analisis defek dan berkolaborasi dengan developer untuk mengatasi kendala serta memastikan keberhasilan implementasi fungsionalitas ERP.
+- Mengurangi tingkat error produksi dari 88% menjadi 2%, secara signifikan meningkatkan keandalan sistem dengan mengoptimalkan pemrosesan asinkron dan alur kerja penyimpanan Cloudflare R2.
+- Berkoordinasi dengan 20+ pemangku kepentingan lintas tim untuk mengintegrasikan agen AI dan alur kerja otomatisasi ke dalam operasi bisnis internal, memastikan adopsi dan implementasi yang sukses.`,
       },
     ],
     isCurrentEmployer: true,

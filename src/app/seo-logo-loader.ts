@@ -4,8 +4,8 @@ import path from "node:path"
 import sharp from "sharp"
 
 /**
- * Loads the SEO/logo and profile images from public/, converts them to PNG
- * buffers in-memory at module-load time, and exposes base64 data URIs.
+ * Loads the SEO logo from public/, converts it to a PNG buffer in-memory,
+ * and exposes a base64 data URI.
  *
  * Why in-memory PNG conversion instead of shipping a PNG file:
  *   - next/og's ImageResponse uses Satori under the hood, which only accepts
@@ -18,7 +18,6 @@ import sharp from "sharp"
  * Used by:
  *   - src/app/icon.tsx        (favicon 64x64)
  *   - src/app/apple-icon.tsx  (apple touch icon 180x180)
- *   - src/app/opengraph-image.tsx (profile image inside OG share image 1200x630)
  *
  * Top-level await is required here for the sharp conversion. Next.js 16 +
  * Turbopack support TLA in ESM modules.
@@ -37,14 +36,4 @@ const pngBuffer = await sharp(webpBuffer)
   .png({ compressionLevel: 9, quality: 90 })
   .toBuffer()
 
-const profileWebpBuffer = fs.readFileSync(
-  path.join(process.cwd(), "public/image/profile.webp")
-)
-
-const profilePngBuffer = await sharp(profileWebpBuffer)
-  .resize({ width: 256, height: 256, fit: "cover" })
-  .png({ compressionLevel: 9, quality: 90 })
-  .toBuffer()
-
 export const SEO_LOGO_DATA_URI = `data:image/png;base64,${pngBuffer.toString("base64")}`
-export const PROFILE_IMAGE_DATA_URI = `data:image/png;base64,${profilePngBuffer.toString("base64")}`

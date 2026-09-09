@@ -31,7 +31,7 @@ function TooltipTrigger(
 function TooltipContent({
   className,
   side = "top",
-  sideOffset = 8,
+  sideOffset = 6,
   align = "center",
   alignOffset = 0,
   children,
@@ -46,8 +46,11 @@ function TooltipContent({
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          "isolate z-50 w-fit max-w-xs origin-(--radix-tooltip-content-transform-origin) bg-foreground text-background",
-          "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 rounded-lg px-4 py-2 text-sm will-change-transform",
+          "isolate z-50 inline-flex w-fit max-w-xs origin-(--radix-tooltip-content-transform-origin) items-center rounded-md bg-foreground px-2.5 py-1 font-sans text-xs font-medium text-background shadow-md will-change-transform select-none",
+          "data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1",
+          "data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95",
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           "selection:bg-background selection:text-foreground",
           className
         )}
@@ -55,9 +58,9 @@ function TooltipContent({
       >
         {children}
         <TooltipPrimitive.Arrow
-          className={cn("fill-foreground")}
-          width={10}
-          height={5}
+          className="fill-foreground"
+          width={8}
+          height={4}
         />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>

@@ -2,13 +2,23 @@
 
 import { useMemo, useState } from "react"
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/base/ui/tooltip"
+import type * as TooltipComponents from "@/components/base/ui/tooltip"
 import { GITHUB_USERNAME, UTM_PARAMS } from "@/config/site"
 import { addQueryParams } from "@/utils/url"
+
+/**
+ * Radix's tooltip is only ever shown by this graph, which sits below the fold
+ * and reacts to the pointer alone, so it is fetched on the first pointer entry
+ * rather than shipped in the initial bundle. Until then the calendar renders
+ * and reads exactly the same - it just has no floating label yet.
+ */
+type TooltipModule = typeof TooltipComponents
+
+let tooltipPromise: Promise<TooltipModule> | undefined
+
+function loadTooltip() {
+  return (tooltipPromise ??= import("@/components/base/ui/tooltip"))
+}
 
 export type CompactContributionDay = readonly [count: number, level: number]
 
@@ -116,7 +126,17 @@ export function GitHubContributionGraph({
     [days, startDate]
   )
   const [hovered, setHovered] = useState<PositionedDay | null>(null)
+  const [tooltip, setTooltip] = useState<TooltipModule | null>(null)
   const width = calendar.weekCount * CELL_SIZE - BLOCK_MARGIN
+
+  function handlePointerEnter() {
+    if (tooltip) return
+    loadTooltip()
+      .then(setTooltip)
+      .catch(() => {
+        tooltipPromise = undefined
+      })
+  }
 
   function handlePointerMove(event: React.PointerEvent<SVGSVGElement>) {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -143,6 +163,7 @@ export function GitHubContributionGraph({
           height={HEIGHT}
           viewBox={`0 0 ${width} ${HEIGHT}`}
           width={width}
+          onPointerEnter={handlePointerEnter}
           onPointerMove={handlePointerMove}
           onPointerLeave={() => setHovered(null)}
           aria-hidden
@@ -167,25 +188,27 @@ export function GitHubContributionGraph({
               key={level}
             />
           ))}
-          {hovered && (
-            <Tooltip open>
-              <TooltipTrigger asChild>
-                <rect
-                  fill="transparent"
-                  height={BLOCK_SIZE}
-                  width={BLOCK_SIZE}
-                  x={hovered.weekIndex * CELL_SIZE}
-                  y={LABEL_HEIGHT + hovered.dayIndex * CELL_SIZE}
-                />
-              </TooltipTrigger>
-              <TooltipContent className="font-sans">
-                <p>
-                  {hovered.count} contribution{hovered.count > 1 ? "s" : null}{" "}
-                  on{" "}
-                  {dateFormatter.format(new Date(`${hovered.date}T00:00:00Z`))}
-                </p>
-              </TooltipContent>
-            </Tooltip>
+          {hovered && tooltip && (
+            <tooltip.TooltipProvider>
+              <tooltip.Tooltip open>
+                <tooltip.TooltipTrigger asChild>
+                  <rect
+                    fill="transparent"
+                    height={BLOCK_SIZE}
+                    width={BLOCK_SIZE}
+                    x={hovered.weekIndex * CELL_SIZE}
+                    y={LABEL_HEIGHT + hovered.dayIndex * CELL_SIZE}
+                  />
+                </tooltip.TooltipTrigger>
+                <tooltip.TooltipContent className="font-sans">
+                  <p>
+                    {hovered.count} contribution{hovered.count > 1 ? "s" : null}{" "}
+                    on{" "}
+                    {dateFormatter.format(new Date(`${hovered.date}T00:00:00Z`))}
+                  </p>
+                </tooltip.TooltipContent>
+              </tooltip.Tooltip>
+            </tooltip.TooltipProvider>
           )}
         </svg>
       </div>

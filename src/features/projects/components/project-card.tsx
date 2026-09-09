@@ -4,110 +4,11 @@ import { ArrowUpRightIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
+import { Tag } from "@/components/ui/tag"
 import type { Project } from "@/features/portfolio/types/projects"
-import type { Language } from "@/hooks/use-language-preference"
+import { useIntentPrefetch } from "@/hooks/use-intent-prefetch"
 import { localize } from "@/lib/i18n/localize"
 import { useTranslation } from "@/lib/i18n/use-translation"
-
-function getDisplayDomain(url?: string): string {
-  if (!url) return ""
-  try {
-    const parsed = new URL(url)
-    return parsed.hostname.replace(/^www\./, "")
-  } catch {
-    return url.replace(/^https?:\/\//, "").replace(/\/.*$/, "")
-  }
-}
-
-const SHORT_PROJECT_NAMES: Record<
-  string,
-  { name: string; desc: string; descId?: string }
-> = {
-  naratioai: {
-    name: "Narratio AI",
-    desc: "Business Narrative Deck Generator",
-    descId: "Generator Deck Narasi Bisnis",
-  },
-  custora: {
-    name: "Custora",
-    desc: "AI Customer Intelligence Platform",
-    descId: "Platform Intelijen Pelanggan AI",
-  },
-  leadsup: {
-    name: "LeadsUp",
-    desc: "Banking Lead Scoring Dashboard",
-    descId: "Dashboard Lead Scoring Perbankan",
-  },
-  "base-realms": {
-    name: "Base Realms",
-    desc: "16-bit RPG Battle Game on Base",
-    descId: "Game Battle RPG 16-bit di Base",
-  },
-  polsekrembang: {
-    name: "Polsek Rembang",
-    desc: "RAG Public Service Assistant",
-    descId: "Asisten Layanan Publik RAG",
-  },
-  "machine-learning-system": {
-    name: "ML System",
-    desc: "Vegetable Classification Pipeline",
-    descId: "Pipeline Klasifikasi Sayuran",
-  },
-  qmeal: {
-    name: "SmartCanteen",
-    desc: "AI Menu Recommendation Engine",
-    descId: "Mesin Rekomendasi Menu AI",
-  },
-  "financial-assistant-bot": {
-    name: "Finance Bot",
-    desc: "Personal Budgeting Assistant",
-    descId: "Asisten Anggaran Pribadi",
-  },
-  floodsegmen: {
-    name: "FloodSeg",
-    desc: "Aerial Flood Area Segmentation",
-    descId: "Segmentasi Area Banjir dari Udara",
-  },
-  "brazilian-ecommerce-dashboard": {
-    name: "Olist Analytics",
-    desc: "E-commerce Sales & Delivery Dashboard",
-    descId: "Dashboard Penjualan & Pengiriman E-commerce",
-  },
-  lostandfound: {
-    name: "SITEMU",
-    desc: "Campus Lost & Found Portal",
-    descId: "Portal Barang Hilang & Ditemukan Kampus",
-  },
-  "diabetes-classification": {
-    name: "Diabetes Predictor",
-    desc: "Health Screening & Early Risk Model",
-    descId: "Skrining Kesehatan & Model Risiko Dini",
-  },
-  imageclas: {
-    name: "Veggie Classifier",
-    desc: "Vegetable Image Recognition App",
-    descId: "Aplikasi Pengenalan Gambar Sayuran",
-  },
-}
-
-function parseProjectInfo(project: Project, language: Language) {
-  const short = SHORT_PROJECT_NAMES[project.id]
-  if (short) {
-    return {
-      name: short.name,
-      desc: localize(language, short.desc, short.descId),
-    }
-  }
-  if (project.title.includes(" - ")) {
-    const [name, ...rest] = project.title.split(" - ")
-    return { name: name.trim(), desc: rest.join(" - ").trim() }
-  }
-  if (project.title.includes(" – ")) {
-    const [name, ...rest] = project.title.split(" – ")
-    return { name: name.trim(), desc: rest.join(" – ").trim() }
-  }
-  return { name: project.title, desc: localize(language, project.tagline, project.taglineId) }
-}
 
 export function ProjectCard({
   project,
@@ -117,52 +18,90 @@ export function ProjectCard({
   eager?: boolean
 }) {
   const { language } = useTranslation()
-  const { name, desc } = parseProjectInfo(project, language)
-  const domain = getDisplayDomain(project.link || project.links.live || project.links.repo)
+  const href = `/projects/${project.id}`
+  const intentPrefetch = useIntentPrefetch(href)
+  const coverSkills = project.coverSkills ?? project.skills.slice(0, 3)
+  const tagline = localize(language, project.tagline, project.taglineId)
+
+  const handleCardClick = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("projects_scroll_y", String(window.scrollY))
+      sessionStorage.setItem("projects_from_detail", "true")
+      sessionStorage.setItem("projects_last_id", project.id)
+    }
+  }
 
   return (
-    <div className="mx-3 border-b border-line/70 last:border-b-0 sm:mx-5">
+    <div
+      id={`project-${project.id}`}
+      className="group flex flex-col gap-2 bg-background p-3 transition-[background-color] duration-200 ease-out hover:bg-accent-muted"
+    >
       <Link
-        href={`/projects/${project.id}`}
+        href={href}
         prefetch={false}
-        className="group -mx-2.5 flex items-start gap-3.5 rounded-xl px-2.5 py-3 transition-[background-color] duration-200 ease-out hover:bg-accent-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:gap-4 sm:py-3.5"
+        scroll={false}
+        {...intentPrefetch}
+        onClick={handleCardClick}
+        className="flex h-full flex-col gap-2 rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
       >
-        {/* Rectangular Image / Thumbnail */}
-        <div className="relative aspect-video w-20 shrink-0 overflow-hidden rounded-md border border-line bg-muted select-none mt-0.5 sm:w-20">
+        {/* Photo frame container (locked design) */}
+        <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-lg border border-line bg-muted select-none">
+          {/* Main Background: Sharp unblurred image.webp */}
           <Image
-            src={project.image}
+            src="/image.webp"
             alt=""
             fill
-            sizes="(min-width: 640px) 80px, 80px"
-            quality={85}
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-            loading={eager ? "eager" : "lazy"}
-            fetchPriority={eager ? "high" : "auto"}
+            sizes="(min-width: 640px) 550px, 100vw"
+            className="pointer-events-none object-cover select-none"
+            priority={eager}
           />
+
+          {/* Standardized Floating Frame in the center */}
+          <div className="relative z-10 flex aspect-[16/10] w-[86%] items-center justify-center overflow-hidden rounded-lg border border-black/20 bg-black/40 shadow-xl shadow-black/40 transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100 dark:border-white/20">
+            {/* Empty space / slip filler: Blurred project photo */}
+            <Image
+              src={project.image}
+              alt=""
+              fill
+              sizes="(min-width: 640px) 480px, 90vw"
+              className="pointer-events-none object-cover blur-md scale-110 opacity-75 brightness-90 select-none"
+              priority={eager}
+            />
+            <div className="absolute inset-0 bg-black/15 pointer-events-none dark:bg-black/30" />
+
+            {/* Main project photo: 100% visible, uncropped */}
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(min-width: 640px) 480px, 90vw"
+              className="relative z-10 object-contain drop-shadow-md"
+              quality={85}
+              loading={eager ? "eager" : "lazy"}
+              fetchPriority={eager ? "high" : "auto"}
+            />
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-start sm:gap-4">
-          {/* Name + Domain */}
-          <div className="flex min-w-0 flex-col sm:w-56 sm:shrink-0 md:w-64">
-            <div className="flex items-center gap-1.5 text-sm font-semibold leading-snug text-foreground sm:text-base">
-              <span className="truncate">{name}</span>
-              <ArrowUpRightIcon
-                className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
-                aria-hidden
-              />
-            </div>
-            {domain && (
-              <span className="truncate text-xs text-muted-foreground/80 sm:text-sm">
-                {domain}
-              </span>
-            )}
+        {/* Project details inside card (original design) */}
+        <div className="flex flex-col gap-2 p-2">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-lg leading-snug font-medium text-balance">
+              {project.title}
+            </p>
+            <ArrowUpRightIcon className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
 
-          {/* Description / Subtitle */}
-          <p className="min-w-0 flex-1 text-xs leading-snug text-muted-foreground line-clamp-2 mt-0.5 sm:mt-0.5 sm:text-sm">
-            {desc}
+          <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">
+            {tagline}
           </p>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Tag>{project.year}</Tag>
+            {coverSkills.map((skill) => (
+              <Tag key={skill}>{skill}</Tag>
+            ))}
+          </div>
         </div>
       </Link>
     </div>
@@ -170,11 +109,20 @@ export function ProjectCard({
 }
 
 export function ProjectGrid({ projects }: { projects: Project[] }) {
+  const isOdd = projects.length % 2 === 1
+
   return (
-    <div className="relative bg-background py-1">
+    <div className="grid grid-cols-1 gap-px border-b border-line bg-line sm:grid-cols-2">
       {projects.map((project, index) => (
-        <ProjectCard key={project.id} project={project} eager={index === 0} />
+        <ProjectCard key={project.id} project={project} eager={index < 2} />
       ))}
+      {isOdd && (
+        <div className="hidden min-h-[300px] flex-col items-center justify-center bg-background p-6 select-none sm:flex">
+          <span className="font-handwritten text-3xl font-medium tracking-wider text-muted-foreground">
+            Still cooking
+          </span>
+        </div>
+      )}
     </div>
   )
 }

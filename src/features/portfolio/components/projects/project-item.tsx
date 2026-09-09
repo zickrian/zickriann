@@ -1,7 +1,10 @@
+"use client"
+
 import { ArrowUpRightIcon, FolderBookmarkIcon } from "lucide-react"
 import Link from "next/link"
 
 import type { Project } from "@/features/portfolio/types/projects"
+import { useIntentPrefetch } from "@/hooks/use-intent-prefetch"
 import { cn } from "@/lib/utils"
 
 export function ProjectItem({
@@ -11,14 +14,18 @@ export function ProjectItem({
   className?: string
   project: Project
 }) {
+  const href = `/projects/${project.id}`
+  const intentPrefetch = useIntentPrefetch(href)
+
   return (
     <Link
       className={cn(
         "flex items-center pr-2 transition-colors duration-200 ease-out hover:bg-accent-muted",
         className
       )}
-      href={`/projects/${project.id}`}
+      href={href}
       prefetch={false}
+      {...intentPrefetch}
     >
       <div className="flex w-15 shrink-0 items-center justify-center">
         <div className="flex size-6 items-center justify-center rounded-lg border border-muted-foreground/15 bg-muted text-muted-foreground ring-1 ring-line ring-offset-1 ring-offset-background select-none">

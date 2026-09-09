@@ -86,7 +86,10 @@ export function CertificationItem({
           <dl>
             <dt className="sr-only">{t.certifications.issuedOn}</dt>
             <dd>
-              <time dateTime={new Date(certification.issueDate).toISOString()}>
+              <time
+                suppressHydrationWarning
+                dateTime={new Date(certification.issueDate).toISOString()}
+              >
                 {format(new Date(certification.issueDate), "dd.MM.yyyy")}
               </time>
             </dd>

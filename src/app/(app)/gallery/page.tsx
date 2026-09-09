@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Script from "next/script"
 
 import { GalleryVideo } from "@/components/gallery-video"
 import { SectionSeparator } from "@/components/section-separator"
@@ -88,20 +89,22 @@ function getGalleryJsonLd() {
 export default function GalleryPage() {
   return (
     <>
-      <script
+      <Script
+        id="gallery-jsonld"
         type="application/ld+json"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(getGalleryJsonLd()).replace(/</g, "\\u003c"),
         }}
       />
       <SectionSeparator />
-      <div className="relative z-1 -mt-px border-x border-t border-line bg-background max-md:border-x-0">
+      <div className="relative z-1 -mt-px border-x border-t border-line bg-card max-md:border-x-0">
         <div className="grid grid-cols-1 gap-px border-b border-line bg-line sm:grid-cols-2">
           {GALLERY_ITEMS.map((item, index) => (
             <GalleryCard key={item.src} item={item} eager={index < 2} />
           ))}
           {GALLERY_ITEMS.length % 2 === 1 && (
-            <div className="hidden min-h-62.5 flex-col items-center justify-center bg-background p-6 select-none sm:flex">
+            <div className="hidden min-h-62.5 flex-col items-center justify-center bg-card p-6 select-none sm:flex">
               <span className="font-handwritten text-3xl font-medium tracking-wider text-muted-foreground">
                 Still cooking
               </span>
@@ -120,7 +123,7 @@ export default function GalleryPage() {
 
 function GalleryCard({ item, eager }: { item: GalleryItem; eager?: boolean }) {
   return (
-    <div className="flex flex-col gap-2 bg-background p-3">
+    <div className="flex flex-col gap-2 bg-card p-3">
       <div
         className={cn(
           "group/media relative overflow-hidden rounded-xl select-none",

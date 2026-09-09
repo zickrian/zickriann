@@ -43,7 +43,7 @@ function useClockParts(timeZone: string) {
 
   // The zone's offset is deterministic, so it is derived here rather than held
   // in state: server and client resolve the same string for the same zone.
-  const offset = utcOffsetLabel(timeZone, now ?? new Date())
+  const offset = utcOffsetLabel(timeZone, now ?? new Date(0))
 
   if (!now) {
     return {
@@ -158,8 +158,9 @@ export function FooterClock({
       </svg>
 
       <span className="footer-stamp-lines">
-        <span>{offset}</span>
+        <span suppressHydrationWarning>{offset}</span>
         <time
+          suppressHydrationWarning
           dateTime={iso}
           aria-label={`Current local time in ${place}: ${label}`}
         >

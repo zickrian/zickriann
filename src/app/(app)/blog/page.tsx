@@ -3,6 +3,8 @@
 // Zero compute per visitor - only one server render per 30-min window.
 export const revalidate = 1800
 
+import Script from "next/script"
+
 import { SectionSeparator } from "@/components/section-separator"
 import { SITE_INFO } from "@/config/site"
 import { BlogPageContent } from "@/features/blog/components/blog-page-content"
@@ -49,14 +51,16 @@ export const metadata = createPageMetadata({
 export default function BlogPage() {
   return (
     <>
-      <script
+      <Script
+        id="blog-jsonld"
         type="application/ld+json"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(getBlogJsonLd()).replace(/</g, "\\u003c"),
         }}
       />
       <SectionSeparator />
-      <div className="relative z-1 -mt-px border-x border-t border-line bg-background max-md:border-x-0">
+      <div className="relative z-1 -mt-px border-x border-t border-line bg-card max-md:border-x-0">
         <BlogPageContent />
 
         <SectionSeparator sides={false} />

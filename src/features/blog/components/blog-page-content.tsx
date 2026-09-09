@@ -24,7 +24,7 @@ function formatDate(dateStr: string): string {
 function BlogListItem({ post, eager }: { post: MediumPost; eager?: boolean }) {
   return (
     <Reveal>
-      <div className="group border-b border-line bg-background transition-[background-color] ease-out hover:bg-accent-muted">
+      <div className="group border-b border-line bg-card transition-[background-color] ease-out hover:bg-accent-muted">
         <a
           href={post.link}
           target="_blank"

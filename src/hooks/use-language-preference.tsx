@@ -18,15 +18,26 @@ export function LanguagePreferenceProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [language, setLanguageState] = useState<Language>(() =>
-    typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "id"
-      ? "id"
-      : "en"
-  )
+  const [language, setLanguageState] = useState<Language>("en")
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const nextLanguage = stored === "id" || stored === "en" ? stored : "en"
+
+    if (nextLanguage === "en") {
+      return
+    }
+
+    requestAnimationFrame(() => {
+      setLanguageState(nextLanguage)
+    })
+  }, [])
 
   const setLanguage = (value: Language) => {
     setLanguageState(value)
-    localStorage.setItem(STORAGE_KEY, value)
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, value)
+    }
     document.documentElement.lang = value
   }
 
@@ -44,9 +55,10 @@ export function LanguagePreferenceProvider({
 export function useLanguagePreference() {
   const context = useContext(LanguagePreferenceContext)
   if (!context) {
-    throw new Error(
-      "useLanguagePreference must be used within LanguagePreferenceProvider"
-    )
+    return {
+      language: "en" as Language,
+      setLanguage: () => {},
+    }
   }
 
   return context

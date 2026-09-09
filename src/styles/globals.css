@@ -655,7 +655,9 @@
 
   &>span {
     @apply tracking-[0.08em];
-    color: color-mix(in oklab, var(--color-muted-foreground) 72%, transparent);
+    /* 72% landed on 4.45:1 against the dark card - just under WCAG AA. 78%
+       clears it at 5.1:1 and is the same muted grey to the eye. */
+    color: color-mix(in oklab, var(--color-muted-foreground) 78%, transparent);
   }
 
   & time,
@@ -765,7 +767,7 @@
      the gutter exactly. Full-bleed under `sm`, applied on the element. */
   --chat-panel-width: 22rem;
 
-  --background: #ffffff;
+  --background: #eaedf0;
   --foreground: #09090b;
   --primary: #09090b;
   --primary-foreground: #ffffff;

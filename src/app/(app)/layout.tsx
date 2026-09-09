@@ -1,16 +1,19 @@
 import { ChatWidget } from "@/components/chat-widget"
-import { InteractiveDotsField } from "@/components/interactive-dots-field"
+import { PixelBlast } from "@/components/pixel-blast"
 import { SiteFooter } from "@/components/site-footer"
 import { PortfolioNavbar } from "@/features/portfolio/components/portfolio-navbar"
 import { ProfileHeader } from "@/features/portfolio/components/profile-header"
+import { getGitHubRepoStats } from "@/features/portfolio/data/github-repo"
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const repoStats = await getGitHubRepoStats()
+
   return (
     // No padding reacts to the chat opening, on purpose: the panel occupies the
     // gutter beside the centred column rather than displacing it, so opening the
     // chat never moves a single thing on the page.
     <div className="group/layout relative">
-      <InteractiveDotsField />
+      <PixelBlast />
       {/* Invisible until tabbed to. Without it, reaching the content by keyboard
           means walking the whole header and nav on every single page. */}
       <a
@@ -22,7 +25,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       <main className="max-w-screen overflow-x-clip sm:px-2">
         <div className="relative z-1 mx-auto bg-card md:max-w-[720px] *:[[id]]:scroll-mt-26">
-          <ProfileHeader />
+          <ProfileHeader repoStats={repoStats} />
           <PortfolioNavbar className="h-14" />
           <div id="main" tabIndex={-1} className="outline-none">
             {children}

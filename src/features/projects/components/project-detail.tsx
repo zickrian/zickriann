@@ -3,6 +3,7 @@
 import { ExternalLinkIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect } from "react"
 
 import { Icons } from "@/components/icons"
 import { Markdown } from "@/components/markdown"
@@ -10,25 +11,55 @@ import { SectionSeparator } from "@/components/section-separator"
 import { Tag } from "@/components/ui/tag"
 import { Prose } from "@/components/ui/typography"
 import type { Project } from "@/features/portfolio/types/projects"
+import { useIntentPrefetch } from "@/hooks/use-intent-prefetch"
 import { useTranslation } from "@/lib/i18n/use-translation"
 
 import { ProjectGallery } from "./project-gallery"
 
 function isExternalUrl(value: string) {
-  return /^https?:\/\//.test(value)
+  return value.startsWith("http://") || value.startsWith("https://")
 }
 
 export function ProjectDetail({ project }: { project: Project }) {
   const { t, l } = useTranslation()
+  const backPrefetch = useIntentPrefetch("/projects")
+
+  // Always position view at the exact top of the project detail (directly below navbar)
+  useEffect(() => {
+    const scrollToProjectTop = () => {
+      const about = document.getElementById("about")
+      const main = document.getElementById("main")
+      const nav = document.querySelector("nav")
+      const targetY = about
+        ? about.offsetTop + about.offsetHeight
+        : main
+          ? main.offsetTop - (nav?.offsetHeight || 56)
+          : 0
+      window.scrollTo({ top: targetY, behavior: "instant" })
+    }
+
+    scrollToProjectTop()
+    const frame = requestAnimationFrame(scrollToProjectTop)
+    return () => cancelAnimationFrame(frame)
+  }, [project.id])
+
+  const handleBackClick = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("projects_from_detail", "true")
+    }
+  }
 
   return (
-    <article className="relative z-1 -mt-px border-x border-line bg-background max-md:border-x-0">
+    <article className="relative z-1 -mt-px border-x border-line bg-card max-md:border-x-0">
       {/* Sticky back nav */}
-      <div className="sticky top-14 z-30 border-b border-line bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/75">
+      <div className="sticky top-14 z-30 border-b border-line bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/75">
         <div className="flex h-12 items-center justify-between gap-3 px-4 md:px-8">
           <Link
             href="/projects"
             prefetch={false}
+            scroll={false}
+            {...backPrefetch}
+            onClick={handleBackClick}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <svg
@@ -41,6 +72,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="size-4"
             >
               <path d="m12 19-7-7 7-7" />
               <path d="M19 12H5" />
@@ -73,14 +105,14 @@ export function ProjectDetail({ project }: { project: Project }) {
               href={project.links.live}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="inline-flex items-center gap-2 rounded-lg border border-line bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-foreground/25 hover:bg-muted dark:border-transparent dark:bg-foreground dark:text-background dark:hover:opacity-90"
+              className="inline-flex items-center gap-2 rounded-lg border border-transparent bg-foreground px-4 py-2 text-sm font-medium text-background shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-foreground/85 hover:shadow-md active:translate-y-0 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <ExternalLinkIcon className="size-4" />
               {t.projectDetail.liveDemo}
             </a>
           )}
           {project.links.live && !isExternalUrl(project.links.live) && (
-            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/50 px-4 py-2 text-sm font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-muted/40 px-4 py-2 text-sm font-medium text-muted-foreground">
               <ExternalLinkIcon className="size-4" />
               {project.links.live}
             </span>
@@ -90,14 +122,14 @@ export function ProjectDetail({ project }: { project: Project }) {
               href={project.links.repo}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="inline-flex items-center gap-2 rounded-lg border border-line bg-card px-4 py-2 text-sm font-medium text-foreground transition-[background-color,color,border-color,transform] hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="inline-flex items-center gap-2 rounded-lg border border-line bg-card px-4 py-2 text-sm font-medium text-foreground shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/30 hover:bg-accent hover:text-foreground hover:shadow-md active:translate-y-0 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <Icons.github className="size-4" />
               {t.projectDetail.sourceCode}
             </a>
           )}
           {project.links.repo && !isExternalUrl(project.links.repo) && (
-            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/50 px-4 py-2 text-sm font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-muted/40 px-4 py-2 text-sm font-medium text-muted-foreground">
               <Icons.github className="size-4" />
               {project.links.repo}
             </span>
@@ -113,42 +145,36 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
 
         {project.videoEmbed ? (
-          <figure className="relative aspect-video overflow-hidden rounded-xl border border-line bg-background shadow-sm">
+          <figure className="relative aspect-video overflow-hidden rounded-xl border border-line bg-card shadow-sm">
             {project.videoEmbed.src.endsWith(".mp4") ? (
               <video
                 src={project.videoEmbed.src}
                 controls
-                preload="none"
-                poster={project.image}
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 size-full object-contain"
-              />
+                className="size-full object-contain"
+              >
+                <track kind="captions" />
+              </video>
             ) : (
               <iframe
                 src={project.videoEmbed.src}
-                title={project.videoEmbed.title}
-                className="absolute inset-0 size-full"
-                allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                title={project.videoEmbed.title ?? project.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                loading="lazy"
+                className="size-full"
               />
             )}
           </figure>
         ) : project.gallery && project.gallery.length > 0 ? (
           <ProjectGallery images={project.gallery} title={project.title} />
         ) : (
-          <figure className="relative aspect-video overflow-hidden rounded-xl border border-line bg-background shadow-sm">
+          <figure className="relative aspect-video overflow-hidden rounded-xl border border-line bg-card shadow-sm">
             <Image
               src={project.image}
               alt={project.title}
               fill
-              sizes="(min-width: 768px) 720px, 100vw"
-              loading="eager"
-              fetchPriority="high"
-              className="object-contain"
-              quality={85}
+              sizes="(min-width: 1024px) 800px, 100vw"
+              className="object-cover"
+              priority
             />
           </figure>
         )}
@@ -229,11 +255,8 @@ export function ProjectDetail({ project }: { project: Project }) {
         </Section>
       )}
 
-      {/* Was a bare 48px void: the last section's bottom rule plus the
-          article's side rules boxed in an empty rectangle before the footer.
-          The hatched band fills it and turns that rule into its top edge, the
-          same way every other page now closes. */}
-      <SectionSeparator sides={false} />
+      {/* Section separator */}
+      <SectionSeparator />
     </article>
   )
 }
@@ -246,8 +269,8 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section className="relative border-b border-line px-4 py-8 md:px-8">
-      <h2 className="mb-5 font-handwritten text-[1.1rem] tracking-[0.18em] text-muted-foreground uppercase">
+    <section className="border-b border-line px-4 py-8 md:px-8">
+      <h2 className="mb-4 text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
         {title}
       </h2>
       {children}
@@ -257,11 +280,11 @@ function Section({
 
 function MetaCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-background px-4 py-5 md:px-6">
+    <div className="bg-card px-4 py-5 md:px-6">
       <dt className="mb-1 font-handwritten text-[1rem] tracking-[0.18em] text-muted-foreground uppercase">
         {label}
       </dt>
-      <dd className="text-sm leading-6 font-medium">{value}</dd>
+      <dd className="font-mono text-xs text-foreground">{value}</dd>
     </div>
   )
 }

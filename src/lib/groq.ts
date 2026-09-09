@@ -27,6 +27,10 @@ const MODEL_TIERS = [
   },
   {
     tier: "3",
+    model: "qwen/qwen3.8-27b", // 8K ctx, 8K TPM, 2M TPD - balanced fallback
+  },
+  {
+    tier: "4",
     model: "openai/gpt-oss-20b", // 8K ctx, 8K TPM, 200K TPD - lightweight fallback
   },
 ] as const
@@ -341,6 +345,11 @@ const MODEL_OPTIONS_MAP: Record<string, ModelRequestOptions> = {
     temperature: 0.2,
   },
   "qwen/qwen3.6-27b": {
+    max_completion_tokens: QWEN_SMALL_COMPLETION_TOKENS,
+    temperature: 0.2,
+    reasoning_effort: "none",
+  },
+  "qwen/qwen3.8-27b": {
     max_completion_tokens: QWEN_SMALL_COMPLETION_TOKENS,
     temperature: 0.2,
     reasoning_effort: "none",

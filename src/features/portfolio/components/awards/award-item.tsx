@@ -63,7 +63,10 @@ export function AwardItem({
                 <dl>
                   <dt className="sr-only">{t.awards.awardedIn}</dt>
                   <dd>
-                    <time dateTime={new Date(award.date).toISOString()}>
+                    <time
+                      suppressHydrationWarning
+                      dateTime={new Date(award.date).toISOString()}
+                    >
                       {format(new Date(award.date), "MM.yyyy")}
                     </time>
                   </dd>
@@ -83,7 +86,7 @@ export function AwardItem({
 
             {award.referenceLink && (
               <a
-                className="relative flex size-6 shrink-0 items-center justify-center text-muted-foreground after:absolute after:-inset-2 hover:text-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
+                className="relative flex size-6 shrink-0 items-center justify-center text-muted-foreground after:absolute after:-inset-2 hover:text-foreground [&_svg]:pointer-events-none [&_svg]:not([class*='size-'])]:size-4"
                 href={award.referenceLink}
                 target="_blank"
                 rel="noopener noreferrer nofollow"

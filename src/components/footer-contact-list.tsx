@@ -2,12 +2,9 @@
 
 import { ArrowUpRightIcon } from "lucide-react"
 import Image from "next/image"
+import { useEffect, useRef, useState } from "react"
 
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
+import type * as HoverCardComponents from "@/components/ui/hover-card"
 import type { GitHubSocialCard } from "@/features/portfolio/data/github-social"
 import { SOCIAL_LINKS } from "@/features/portfolio/data/social-links"
 import { USER } from "@/features/portfolio/data/user"
@@ -34,18 +31,70 @@ const BLOCK = 10
 const GAP = 2
 const ROWS = 7
 
+/**
+ * Radix's hover-card primitive is dead weight in the initial bundle: it draws a
+ * preview that only ever appears on hover, in a footer that starts several
+ * screens below the fold. It is fetched when the column scrolls within a
+ * screen of the viewport, which is always well before a pointer can reach a
+ * link - waiting for the hover itself would have missed the first one, since
+ * `pointerenter` has already fired by the time the trigger exists. Pointer,
+ * touch and focus stay as a fallback for anyone who lands mid-footer. Until it
+ * arrives the links are plain anchors and fully working.
+ */
+type HoverCardModule = typeof HoverCardComponents
+
+let hoverCardPromise: Promise<HoverCardModule> | undefined
+
+function loadHoverCard() {
+  return (hoverCardPromise ??= import("@/components/ui/hover-card"))
+}
+
 export function FooterContactList({
   github,
 }: {
   github: GitHubSocialCard | null
 }) {
+  const [hoverCard, setHoverCard] = useState<HoverCardModule | null>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+
+  const enhance = () => {
+    loadHoverCard()
+      .then(setHoverCard)
+      .catch(() => {
+        hoverCardPromise = undefined
+      })
+  }
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return
+        observer.disconnect()
+        enhance()
+      },
+      { rootMargin: "600px 0px" }
+    )
+    observer.observe(list)
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <ul>
+    <ul
+      ref={listRef}
+      onPointerEnter={enhance}
+      onTouchStart={enhance}
+      onFocusCapture={enhance}
+    >
       {SOCIAL_LINKS.map((link) => (
         <li key={link.href}>
           <SocialCard
             link={link}
             github={link.title === "GitHub" ? github : null}
+            hoverCard={hoverCard}
           />
         </li>
       ))}
@@ -56,30 +105,35 @@ export function FooterContactList({
 function SocialCard({
   link,
   github,
+  hoverCard,
 }: {
   link: SocialLink
   github: GitHubSocialCard | null
+  hoverCard: HoverCardModule | null
 }) {
   const external = link.href.startsWith("http")
   const isEmail = link.href.startsWith("mailto:")
 
+  const anchor = (
+    <a
+      href={link.href}
+      className="inline-flex w-fit items-center gap-1 transition-[color] hover:text-foreground"
+      {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+    >
+      {link.title}
+      {external && (
+        <ArrowUpRightIcon aria-hidden className="size-3.5 shrink-0 opacity-60" />
+      )}
+    </a>
+  )
+
+  if (!hoverCard) return anchor
+
+  const { HoverCard, HoverCardContent, HoverCardTrigger } = hoverCard
+
   return (
     <HoverCard openDelay={120} closeDelay={100}>
-      <HoverCardTrigger asChild>
-        <a
-          href={link.href}
-          className="inline-flex w-fit items-center gap-1 transition-[color] hover:text-foreground"
-          {...(external && { target: "_blank", rel: "noopener noreferrer" })}
-        >
-          {link.title}
-          {external && (
-            <ArrowUpRightIcon
-              aria-hidden
-              className="size-3.5 shrink-0 opacity-60"
-            />
-          )}
-        </a>
-      </HoverCardTrigger>
+      <HoverCardTrigger asChild>{anchor}</HoverCardTrigger>
 
       <HoverCardContent
         side="top"

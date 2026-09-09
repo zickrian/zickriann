@@ -5,8 +5,8 @@ import { USER } from "@/features/portfolio/data/user"
 
 export const SITE_OG_IMAGE = {
   url: SITE_INFO.ogImage,
-  width: 1920,
-  height: 958,
+  width: 1200,
+  height: 630,
   type: "image/png",
   alt: `${USER.displayName} portfolio - ${USER.jobTitle}`,
 } as const
