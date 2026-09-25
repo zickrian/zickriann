@@ -1,0 +1,1155 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "GeistSans";
+  src: url("/fonts/geist-sans-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: "GeistSans Fallback";
+  src: local("Arial");
+  ascent-override: 94.56%;
+  descent-override: 27.76%;
+  line-gap-override: 0%;
+  size-adjust: 106.28%;
+}
+
+@font-face {
+  font-family: "GeistMono";
+  src: url("/fonts/geist-mono-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: "Caveat";
+  src: url("/fonts/caveat-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400 500;
+}
+
+@font-face {
+  font-family: "Caveat Fallback";
+  src: local("Arial");
+  ascent-override: 124.77%;
+  descent-override: 38.99%;
+  line-gap-override: 0%;
+  size-adjust: 76.94%;
+}
+
+/* Inlined from scroll-fade-effect.css - eliminates one render-blocking CSS request */
+@layer base {
+  @keyframes show-top-mask {
+    to {
+      --top-mask-height: var(--mask-height);
+    }
+  }
+
+  @keyframes hide-bottom-mask {
+    to {
+      --bottom-mask-height: 0px;
+    }
+  }
+
+  @keyframes show-left-mask {
+    to {
+      --left-mask-width: var(--mask-width);
+    }
+  }
+
+  @keyframes hide-right-mask {
+    to {
+      --right-mask-width: 0px;
+    }
+  }
+}
+
+@property --top-mask-height {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --bottom-mask-height {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 64px;
+}
+
+@property --left-mask-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --right-mask-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 64px;
+}
+
+@utility scroll-fade-effect-y {
+  --mask-height: 64px;
+  --mask-offset-top: 0px;
+  --mask-offset-bottom: 0px;
+  --scroll-buffer: 2rem;
+
+  /* Set up the mask layers */
+  mask-image:
+    linear-gradient(to top, transparent, black 90%),
+    linear-gradient(to bottom, transparent 0%, black 100%),
+    linear-gradient(black, black);
+
+  mask-size:
+    100% var(--top-mask-height),
+    100% var(--bottom-mask-height),
+    100% 100%;
+  mask-repeat: no-repeat, no-repeat, no-repeat;
+  mask-position:
+    0 var(--mask-offset-top),
+    0 calc(100% - var(--mask-offset-bottom)),
+    0 0;
+  /* Exclude the gradient areas from the solid mask */
+  mask-composite: exclude;
+
+  animation-name: show-top-mask, hide-bottom-mask;
+  animation-timeline: scroll(self), scroll(self);
+  animation-range:
+    0 var(--scroll-buffer),
+    calc(100% - var(--scroll-buffer)) 100%;
+  animation-fill-mode: both;
+}
+
+@utility scroll-fade-effect-x {
+  --mask-width: 64px;
+  --mask-offset-left: 0px;
+  --mask-offset-right: 0px;
+  --scroll-buffer: 2rem;
+
+  mask-image:
+    linear-gradient(to left, transparent, black 90%),
+    linear-gradient(to right, transparent 0%, black 100%),
+    linear-gradient(black, black);
+
+  mask-size:
+    var(--left-mask-width) 100%,
+    var(--right-mask-width) 100%,
+    100% 100%;
+  mask-repeat: no-repeat, no-repeat, no-repeat;
+  mask-position:
+    var(--mask-offset-left) 0,
+    calc(100% - var(--mask-offset-right)) 0,
+    0 0;
+  mask-composite: exclude;
+
+  animation-name: show-left-mask, hide-right-mask;
+  animation-timeline: scroll(self inline), scroll(self inline);
+  animation-range:
+    0 var(--scroll-buffer),
+    calc(100% - var(--scroll-buffer)) 100%;
+  animation-fill-mode: both;
+}
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@custom-variant supports-timeline-scroll {
+  @supports (animation-timeline: scroll()) {
+    @slot;
+  }
+}
+
+@custom-variant data-open {
+
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-horizontal {
+  &:where([data-orientation="horizontal"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-vertical {
+  &:where([data-orientation="vertical"]) {
+    @slot;
+  }
+}
+
+@custom-variant retina {
+
+  @media (-webkit-min-device-pixel-ratio: 2),
+  (min-resolution: 2x) {
+    @slot;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-accent: var(--accent);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-line: var(--line);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --color-link: var(--link);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-code: var(--code);
+  --color-code-foreground: var(--code-foreground);
+  --color-code-number: var(--code-number);
+  --color-code-highlight: var(--code-highlight);
+  --color-selection: var(--selection);
+  --color-selection-foreground: var(--selection-foreground);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --font-handwritten: var(--font-handwritten);
+  --font-heading: var(--font-sans);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+}
+
+@utility link {
+  @apply decoration-1 underline-offset-3 hover:underline;
+}
+
+@utility link-underline {
+  @apply underline decoration-current/30 decoration-1 underline-offset-3 transition-colors hover:decoration-current;
+}
+
+@utility screen-line-top {
+  @apply relative border-t border-line;
+}
+
+@utility screen-line-top-none {
+  @apply border-t-0;
+}
+
+@utility screen-line-bottom {
+  @apply relative border-b border-line;
+}
+
+@utility screen-line-bottom-none {
+  @apply border-b-0;
+}
+
+@utility step {
+  @apply max-md:pl-10;
+  counter-increment: step;
+
+  &::before {
+    @apply absolute inline-flex size-6 items-center justify-center rounded-lg bg-muted text-center indent-0 text-[0.8125rem]/6 font-normal text-foreground max-md:left-0 md:-ml-10;
+    content: counter(step);
+  }
+}
+
+@utility prose-portfolio {
+  @apply prose-headings:font-medium prose-headings:tracking-tight prose-headings:text-pretty md:prose-headings:text-balance prose-h2:text-xl prose-h3:text-lg;
+  @apply prose-a:font-normal prose-a:wrap-break-word prose-a:text-foreground prose-a:link-underline;
+  @apply prose-code:rounded-md prose-code:border prose-code:bg-muted/50 prose-code:px-1 prose-code:py-px prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none retina:prose-code:border-[0.5px];
+  @apply prose-strong:font-medium;
+  @apply prose-hr:border-line;
+  @apply prose-blockquote:border-l prose-blockquote:border-line prose-blockquote:font-normal prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-blockquote:[&_p:first-of-type]:before:content-none prose-blockquote:[&_p:last-of-type]:after:content-none;
+}
+
+@utility code-inline {
+  @apply rounded-md border bg-muted/50 px-1 py-px font-mono text-[0.8125rem] font-normal whitespace-pre-wrap in-data-table-nowrap:whitespace-nowrap retina:border-[0.5px];
+}
+
+@utility prose-no-margin {
+  &> :first-child {
+    @apply mt-0;
+  }
+
+  &> :last-child {
+    @apply mb-0;
+  }
+
+  :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+  :where([data-rehype-pretty-code-figure]) {
+    @apply mt-3 mb-3;
+  }
+}
+
+@utility extend-touch-target {
+  @media (pointer: coarse) {
+    @apply relative touch-manipulation after:absolute after:-inset-2;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────────────────
+   Sections and cards rise the last few pixels into place as they enter. Driven
+   by `animation-timeline: view()`, so it is the compositor scrubbing the
+   animation against scroll position - no observer, no state, no JS at all.
+
+   Everything about the fallback is deliberate: where the timeline is not
+   supported the rule never applies and content is simply visible, and where
+   motion is reduced the animation is dropped the same way. There is no state in
+   which content can end up stuck invisible. */
+
+@keyframes reveal-in {
+  from {
+    opacity: 0.6;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@utility reveal {
+  @variant supports-timeline-scroll {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    /* Finishes well before the element is centred, so reading is never gated
+       on the animation catching up. */
+    animation-range: entry 0% cover 20%;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
+
+/* ── Footer social cards ────────────────────────────────────────────────────
+   Adapted from cali.so (MIT, © Cali Castle). Two shapes: a profile card for the
+   networks, and a literal airmail envelope for the email address. */
+
+@utility service-card {
+  @apply flex flex-col gap-2;
+
+  & .service-head {
+    @apply flex items-center gap-2.5;
+  }
+
+  & .service-avatar {
+    @apply size-10 shrink-0 rounded-full object-cover;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+
+  & .service-names {
+    @apply flex min-w-0 flex-col leading-tight;
+  }
+
+  & .service-name {
+    @apply truncate text-sm font-medium text-foreground;
+  }
+
+  & .service-sub {
+    @apply truncate font-mono text-xs tracking-[0.02em] text-muted-foreground;
+  }
+
+  /* The brand mark sits out at the edge, the way a letterhead logo would. */
+  & .service-glyph {
+    @apply ml-auto shrink-0 self-start text-muted-foreground [&_svg]:size-5;
+  }
+
+  & .service-bio {
+    @apply text-sm/relaxed text-foreground;
+  }
+
+  & .service-stat {
+    @apply mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5 border-t border-line pt-2 font-mono text-[0.6875rem] tracking-[0.02em] text-muted-foreground tabular-nums;
+
+    & b {
+      @apply font-medium text-foreground;
+    }
+
+    & .service-glyph {
+      @apply self-center;
+    }
+  }
+}
+
+/* The envelope is a depicted object, so it keeps its own paper surface rather
+   than the popover's - darkened in dark mode so it does not glare. */
+@utility email-envelope {
+  --paper: #f4f1ea;
+  --paper-ink: #2b2723;
+  /* Chroma pulled well below true airmail red/blue: on a monochrome page the
+     stripe only has to read as "airmail", not compete with the content. */
+  --mail-red: oklch(0.58 0.075 25);
+  --mail-blue: oklch(0.53 0.055 245);
+
+  @variant dark {
+    --paper: #201e1b;
+    --paper-ink: #e8e2d6;
+  }
+
+  @apply relative block h-37 overflow-hidden;
+  color: var(--paper-ink);
+  /* Faint dot texture, the tooth of the paper stock. */
+  background: radial-gradient(circle at 18% 24%,
+    color-mix(in oklab, var(--paper-ink) 4%, transparent) 0 0.5px,
+    transparent 0.75px),
+  var(--paper);
+  background-size: 13px 11px,
+  auto;
+
+  /* Airmail border: red/blue barber stripe on all four edges. */
+  &::before {
+    content: "";
+    @apply pointer-events-none absolute inset-0 z-4;
+    background:
+      repeating-linear-gradient(135deg,
+        var(--mail-red) 0 7px,
+        transparent 7px 14px,
+        var(--mail-blue) 14px 21px,
+        transparent 21px 28px) top / 100% 3px no-repeat,
+      repeating-linear-gradient(135deg,
+        var(--mail-red) 0 7px,
+        transparent 7px 14px,
+        var(--mail-blue) 14px 21px,
+        transparent 21px 28px) bottom / 100% 3px no-repeat,
+      repeating-linear-gradient(45deg,
+        var(--mail-red) 0 7px,
+        transparent 7px 14px,
+        var(--mail-blue) 14px 21px,
+        transparent 21px 28px) left / 3px 100% no-repeat,
+      repeating-linear-gradient(45deg,
+        var(--mail-red) 0 7px,
+        transparent 7px 14px,
+        var(--mail-blue) 14px 21px,
+        transparent 21px 28px) right / 3px 100% no-repeat;
+    opacity: 0.45;
+  }
+
+  & .envelope-flap {
+    @apply absolute inset-x-0 bottom-0 h-2/3;
+    clip-path: polygon(0 100%, 0 75%, 50% 25%, 100% 75%, 100% 100%);
+    background: color-mix(in oklab, var(--paper-ink) 3%, var(--paper));
+    filter: drop-shadow(0 -1px 0 color-mix(in oklab, var(--paper-ink) 34%, transparent));
+  }
+
+  /* Capped so a long sender name wraps inside the paper instead of sliding
+     under the stamps. */
+  & .envelope-return {
+    @apply absolute top-4 left-4 z-1 max-w-32 font-mono text-[7px] leading-[1.45] tracking-[0.08em];
+    color: color-mix(in oklab, var(--paper-ink) 78%, transparent);
+
+    &>span {
+      @apply mb-px block text-[6px] tracking-[0.16em] opacity-72;
+    }
+  }
+
+  & .envelope-stamps {
+    @apply absolute top-3 right-3 z-2 flex items-start gap-1;
+  }
+
+  & .envelope-stamp {
+    @apply flex flex-col items-center justify-center font-mono leading-none;
+    border: 3px dotted var(--paper);
+    color: color-mix(in oklab, var(--paper-ink) 90%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--paper-ink) 36%, transparent);
+
+    & span {
+      @apply mt-1 text-[5px] tracking-[0.06em];
+    }
+  }
+
+  & .envelope-stamp-portrait {
+    @apply h-15 w-12 rotate-2;
+    background: color-mix(in oklab, var(--mail-red) 11%, var(--paper));
+
+    & img {
+      @apply block size-8 object-cover;
+      filter: grayscale(1) contrast(1.08);
+    }
+  }
+
+  & .envelope-stamp-mark {
+    @apply mt-1 h-11.5 w-9 -rotate-3;
+    background: color-mix(in oklab, var(--mail-blue) 10%, var(--paper));
+
+    & .envelope-star {
+      @apply mt-0 text-base;
+      color: color-mix(in oklab, var(--mail-blue) 66%, var(--paper-ink));
+    }
+  }
+
+  /* Cancellation ring plus its wavy tail, struck over the stamps. */
+  & .envelope-postmark {
+    @apply absolute top-5 right-17 z-3 size-8.5 -rotate-8 rounded-full opacity-72;
+    border: 1px solid color-mix(in oklab, var(--paper-ink) 58%, transparent);
+
+    &::before {
+      content: attr(data-mark);
+      @apply absolute inset-0 grid place-items-center font-mono text-[5px] tracking-[0.04em];
+    }
+
+    &::after {
+      content: "";
+      @apply absolute top-2 left-[1.65rem] h-4 w-11;
+      background: repeating-linear-gradient(to bottom,
+          color-mix(in oklab, var(--paper-ink) 58%, transparent) 0 1px,
+          transparent 1px 5px);
+    }
+  }
+
+  /* Right inset, not just a left offset: the address is the longest string on
+     the envelope and an email can be 35 characters, so it has to be allowed to
+     break rather than run out past the airmail edge. */
+  & .envelope-address {
+    @apply absolute top-21 right-5 left-6 z-2 flex flex-col font-mono text-[11px] leading-[1.3] tracking-[0.02em];
+    color: color-mix(in oklab, var(--paper-ink) 92%, transparent);
+    word-break: break-all;
+
+    &>span {
+      @apply mb-1 text-[6px] tracking-[0.18em] break-normal opacity-68;
+    }
+  }
+}
+
+/* ── Footer colophon ────────────────────────────────────────────────────────
+   Swiss editorial footer set as folder trees: each column reads as a directory
+   listing, with box-drawing connectors drawn in CSS rather than typed as text
+   so they stay hairline-thin and never get selected or read aloud.
+   Adapted from cali.so (MIT, © Cali Castle) onto this project's tokens. */
+
+@utility footer-tree {
+  &>ul {
+    @apply flex flex-col;
+  }
+
+  /* The `├`: a vertical spine down the column, plus a tick out to each row. */
+  & li {
+    @apply relative flex min-h-7 items-center pl-4.5 font-handwritten text-[1.1rem] tracking-wide;
+  }
+
+  & li::before,
+  & li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    background: color-mix(in oklab,
+        var(--color-muted-foreground) 22%,
+        transparent);
+  }
+
+  & li::before {
+    @apply top-0 bottom-0 w-px;
+  }
+
+  /* The `└` on the final row: the spine stops at the tick instead of running on. */
+  & li:last-child::before {
+    @apply bottom-auto h-1/2;
+  }
+
+  & li::after {
+    @apply top-1/2 h-px w-2.5;
+  }
+
+  & li>* {
+    @apply min-w-0 flex-1;
+  }
+}
+
+@utility footer-label {
+  @apply mb-1.5 font-handwritten text-[1.15rem] tracking-[0.18em] uppercase select-none;
+  color: color-mix(in oklab, var(--color-muted-foreground) 75%, transparent);
+}
+
+@utility footer-braille {
+  @apply mt-1 font-handwritten text-[1.1rem] leading-none tracking-[0.15em];
+  color: var(--color-muted-foreground);
+}
+
+/* Clock and geo lines share one stamp shape: a small dial or globe, then a
+   two-line monospaced readout. */
+@utility footer-stamp {
+  @apply flex min-h-5.5 items-center gap-2 font-handwritten text-[1.1rem] leading-none tracking-wide tabular-nums;
+  color: color-mix(in oklab, var(--color-muted-foreground) 88%, transparent);
+}
+
+@utility footer-stamp-lines {
+  @apply flex flex-col gap-px font-handwritten text-[1.1rem] tracking-wide;
+
+  &>span {
+    @apply tracking-[0.08em];
+    /* 72% landed on 4.45:1 against the dark card - just under WCAG AA. 78%
+       clears it at 5.1:1 and is the same muted grey to the eye. */
+    color: color-mix(in oklab, var(--color-muted-foreground) 78%, transparent);
+  }
+
+  & time,
+  &>span:last-child:not(:first-child) {
+    @apply block min-w-[8ch] tracking-[0.02em] whitespace-nowrap;
+    color: color-mix(in oklab, var(--color-muted-foreground) 90%, transparent);
+  }
+}
+
+@utility footer-clock {
+  @apply size-5.5 flex-none overflow-visible;
+  fill: none;
+  stroke: currentColor;
+
+  & .footer-clock-ring,
+  & .footer-clock-ticks {
+    opacity: 0.28;
+    stroke-width: 1;
+  }
+
+  & .footer-clock-ticks,
+  & .footer-clock-hour,
+  & .footer-clock-minute,
+  & .footer-clock-second {
+    stroke-linecap: round;
+  }
+
+  & .footer-clock-hour {
+    opacity: 0.78;
+    stroke-width: 1.6;
+  }
+
+  & .footer-clock-minute {
+    opacity: 0.72;
+    stroke-width: 1.2;
+  }
+
+  & .footer-clock-second {
+    opacity: 0.42;
+    stroke-width: 0.75;
+  }
+
+  & .footer-clock-pin {
+    fill: currentColor;
+    stroke: none;
+  }
+}
+
+@utility footer-globe {
+  @apply size-5.5 flex-none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.7;
+  opacity: 0.5;
+}
+
+/* Contribution graph cell fills, one rule instead of five
+   `data-[level="N"]:fill-muted-foreground/X` variants repeated on every cell.
+   That class list is byte-identical on all 366 rects - ~280 bytes each, which
+   is ~100KB of duplicated markup in the streamed HTML plus the same again in
+   the RSC payload. These declarations are what those variants compiled to. */
+@utility contribution-level {
+  &[data-level="0"] {
+    fill: color-mix(in oklab, var(--muted-foreground) 5%, transparent);
+  }
+
+  &[data-level="1"] {
+    fill: color-mix(in oklab, var(--muted-foreground) 20%, transparent);
+  }
+
+  &[data-level="2"] {
+    fill: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
+  }
+
+  &[data-level="3"] {
+    fill: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
+  }
+
+  &[data-level="4"] {
+    fill: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+  }
+}
+
+/* The contribution grid draws 366 `<rect>`s - 775 elements, 36% of everything
+   in the document - and it always starts below the fold. `content-visibility`
+   keeps its style, layout and paint off the first-paint critical path until it
+   is scrolled near. The panel is a fixed 120px tall (a 118px SVG plus its
+   rule), so the placeholder is exact and nothing shifts when it resolves. */
+@utility defer-offscreen {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
+
+:root {
+  --font-sans: "GeistSans", "GeistSans Fallback", Arial, sans-serif;
+  --font-mono: "GeistMono", ui-monospace, "SFMono-Regular", "Roboto Mono",
+    Menlo, Monaco, "Liberation Mono", "DejaVu Sans Mono", "Courier New",
+    monospace;
+  --font-handwritten: "Caveat", "Caveat Fallback", cursive;
+
+  /* Height of the fixed fade/blur overlay at the bottom of the viewport */
+  --fade-bottom-height: --spacing(24);
+
+  /* Width of the docked chat panel - fixed by design, never draggable.
+     22rem while the right gutter is narrower than that, so the panel simply
+     overlays the edge; see the wide-viewport step below where it instead fills
+     the gutter exactly. Full-bleed under `sm`, applied on the element. */
+  --chat-panel-width: 22rem;
+
+  --background: #eaedf0;
+  --foreground: #09090b;
+  --primary: #09090b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #09090b;
+  --muted: #f4f4f5;
+  --muted-foreground: #6b7280;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --accent: #f4f4f5;
+  --accent-muted: #ffffff;
+  --accent-foreground: #09090b;
+
+  --border: #e5e7eb;
+  --line: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #9ca3af;
+
+  --info: #3b82f6;
+  --success: #22c55e;
+  --destructive: #ef4444;
+  --link: #2563eb;
+
+  --surface: #ffffff;
+  --surface-foreground: #09090b;
+
+  --code: #f1f2f6;
+  --code-foreground: #09090b;
+  --code-number: #9ca3af;
+  --code-highlight: #e5e7eb;
+
+  --selection: #09090b;
+  --selection-foreground: #ffffff;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #09090b;
+  --sidebar-primary: #09090b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f2f6;
+  --sidebar-accent-foreground: #09090b;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #9ca3af;
+
+  --expo-out: linear(0 0%,
+      0.1684 2.66%,
+      0.3165 5.49%,
+      0.446 8.52%,
+      0.5581 11.78%,
+      0.6535 15.29%,
+      0.7341 19.11%,
+      0.8011 23.3%,
+      0.8557 27.93%,
+      0.8962 32.68%,
+      0.9283 38.01%,
+      0.9529 44.08%,
+      0.9711 51.14%,
+      0.9833 59.06%,
+      0.991 67.74%,
+      0.9955 77.11%,
+      0.9982 87.11%,
+      1 100%);
+}
+
+@media (width >=89rem) {
+  :root {
+    --chat-panel-width: calc(50% - 22.5rem);
+  }
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #000000;
+  --secondary: #121215;
+  --secondary-foreground: #ededed;
+  --muted: #121215;
+  --muted-foreground: #a1a1aa;
+  --card: #050505;
+  --card-foreground: #ededed;
+  --popover: #050505;
+  --popover-foreground: #ededed;
+  --accent: #121215;
+  --accent-muted: #0a0a0c;
+  --accent-foreground: #ededed;
+
+  --border: #222226;
+  --line: #222226;
+  --input: #222226;
+  --ring: #52525b;
+
+  --success: #22c55e;
+  --destructive: #ef4444;
+  --link: #38bdf8;
+
+  --surface: #050505;
+  --surface-foreground: #ededed;
+
+  --code: #121215;
+  --code-foreground: var(--foreground);
+  --code-number: #71717a;
+  --code-highlight: #222226;
+
+  --selection: #ededed;
+  --selection-foreground: #000000;
+
+  --sidebar: #050505;
+  --sidebar-foreground: #ededed;
+  --sidebar-primary: #ededed;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #121215;
+  --sidebar-accent-foreground: #ededed;
+  --sidebar-border: #222226;
+  --sidebar-ring: #52525b;
+}
+
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply border-border outline-ring/50;
+  }
+
+  ::selection {
+    @apply bg-selection text-selection-foreground;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeSpeed;
+  }
+
+  /* Custom scrollbar styling. Thanks @shadcn-ui */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  [id] {
+    @apply scroll-mt-18;
+  }
+
+  .twemoji {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    margin: 0 0.05em 0 0.1em;
+    vertical-align: -0.1em;
+  }
+}
+
+@layer components {
+  [data-rehype-pretty-code-figure] {
+    @apply relative my-[1.25em] rounded-xl bg-surface p-1 text-surface-foreground;
+    @apply has-data-rehype-pretty-code-title:pt-0;
+    @apply has-data-[slot=code-block-command]:pt-0;
+
+    pre {
+      @apply no-scrollbar overflow-x-auto overscroll-x-contain p-4 outline-none has-data-line-numbers:px-0;
+    }
+
+    code {
+      @apply min-w-full font-mono text-sm;
+    }
+
+    [data-line] {
+      padding-right: var(--code-padding-right, 0);
+    }
+  }
+
+  [data-line] span {
+    @apply text-(--shiki-light) dark:text-(--shiki-dark);
+  }
+
+  [data-rehype-pretty-code-title] {
+    @apply flex items-center gap-3 px-3 py-2.5 font-mono text-sm text-muted-foreground group-data-[slot=collapsible]/collapsible:pe-20 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground;
+  }
+
+  [data-line-numbers] {
+    counter-reset: line;
+  }
+
+  [data-line-numbers]>[data-line]::before {
+    counter-increment: line;
+    content: counter(line);
+    @apply sticky left-0 inline-block w-16 bg-code pe-6 text-right text-sm text-code-number;
+  }
+
+  [data-line-numbers] [data-highlighted-line][data-line]::before {
+    @apply bg-code-highlight;
+  }
+
+  [data-highlighted-line] {
+    @apply bg-code-highlight;
+  }
+
+  [data-fade-overlay] {
+    @apply pointer-events-none absolute top-0 right-0 z-1 rounded-tr-lg;
+
+    --fade-linear-gradient: linear-gradient(to right,
+        transparent 0,
+        color-mix(in oklab, var(--fade-color, var(--background)) 20%, transparent) 10px,
+        color-mix(in oklab, var(--fade-color, var(--background)) 50%, transparent) 25px,
+        color-mix(in oklab, var(--fade-color, var(--background)) 80%, transparent) 35px,
+        var(--fade-color, var(--background)) 45px);
+
+    --fade-radial-gradient: radial-gradient(ellipse at top right,
+        var(--fade-color, var(--background)) 30%,
+        color-mix(in oklab, var(--fade-color, var(--background)) 80%, transparent) 40%,
+        color-mix(in oklab, var(--fade-color, var(--background)) 50%, transparent) 50%,
+        color-mix(in oklab, var(--fade-color, var(--background)) 20%, transparent) 60%,
+        transparent 70%);
+
+    width: var(--fade-width, 5rem);
+    height: var(--fade-height, 2.25rem);
+    background: var(--fade-background, var(--fade-linear-gradient));
+  }
+}
+
+@keyframes wobble {
+
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+
+  15% {
+    rotate: -10deg;
+  }
+
+  30% {
+    rotate: 10deg;
+  }
+
+  45% {
+    rotate: -5deg;
+  }
+
+  60% {
+    rotate: 5deg;
+  }
+}
+
+@keyframes sun-ray-blink {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes chat-dot-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .bg-stripe-pattern {
+    background-image: linear-gradient(-45deg,
+        color-mix(in oklab, var(--foreground) 3%, transparent) 25%,
+        transparent 25%,
+        transparent 50%,
+        color-mix(in oklab, var(--foreground) 3%, transparent) 50%,
+        color-mix(in oklab, var(--foreground) 3%, transparent) 75%,
+        transparent 75%,
+        transparent);
+    background-size: 8px 8px;
+  }
+}
+
+@keyframes walk-across {
+  0% {
+    transform: translateX(-10%);
+  }
+
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+@utility animate-walk-across {
+  animation: walk-across 8s linear infinite;
+}
+
+@keyframes chart-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.2;
+    transform: translateX(-6px);
+  }
+  to {
+    clip-path: inset(0 0% 0 0);
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes card-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stamp-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) rotate(-6deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@utility animate-chart-sweep {
+  animation: chart-sweep 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@utility animate-card-content {
+  animation: card-content-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-stamp-pop {
+  animation: stamp-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}

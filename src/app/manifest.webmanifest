@@ -1,0 +1,19 @@
+{
+  "short_name": "Firdaus",
+  "name": "Firdaus Khotibul Zickrian",
+  "description": "Portfolio of Firdaus Khotibul Zickrian, an Indonesia-based Computer Science student focused on AI engineering, machine learning, and full-stack development.",
+  "icons": [
+    {
+      "src": "/icons/seo.webp",
+      "sizes": "900x900",
+      "type": "image/webp",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "scope": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
+}
